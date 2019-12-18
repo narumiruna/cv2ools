@@ -21,3 +21,6 @@ class VideoWriter(cv2.VideoWriter):
 
     def __exit__(self, *args, **kwargs):
         self.release()
+
+    def __repr__(self):
+        return self.__class__.__name__ + '()'
