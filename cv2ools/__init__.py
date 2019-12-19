@@ -1,1 +1,1 @@
-from .stream import VideoWriter
+from .stream import VideoStream, VideoWriter
