@@ -1,8 +1,8 @@
-import logging
-
 import cv2
 
-logger = logging.getLogger(__name__)
+from .logging import get_logger
+
+logger = get_logger(__name__)
 
 
 def read(filename):
@@ -16,4 +16,4 @@ def read(filename):
             break
 
     cap.release()
-    logger.info('video capture: {} released', filename)
+    logger.info('video capture: %s released', filename)
