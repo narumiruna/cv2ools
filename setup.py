@@ -1,4 +1,13 @@
-from setuptools import find_packages, setup
+import subprocess
+
+from setuptools import find_packages
+from setuptools import setup
+
+
+def get_version():
+    tag = subprocess.check_output(['git', 'describe', '--tags']).decode('utf-8')
+    version = tag.lstrip('v').split('-')[0]
+    return version
 
 
 def parse_requirements(f):
@@ -14,7 +23,7 @@ def main():
 
     setup(
         name='cv2ools',
-        version='0.0.1',
+        version=get_version(),
         author='なるみ',
         author_email='weaper@gamil.com',
         packages=find_packages(),
