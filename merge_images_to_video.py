@@ -1,15 +1,14 @@
 import argparse
 import os
 from glob import glob
-from logging import getLogger
 
 import cv2
 from tqdm import tqdm
 
-LOGGER = getLogger(__name__)
+import cv2ools
 
 
-def parse():
+def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-r', '--root', type=str)
     parser.add_argument('-o', '--output', type=str, default='output.mp4')
@@ -17,24 +16,19 @@ def parse():
     return parser.parse_args()
 
 
-def main():
-    args = parse()
-
-    paths = sorted(glob(os.path.join(args.root, '*.jpg')))
-
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    video_writer = cv2.VideoWriter(args.output, cv2.CAP_FFMPEG, fourcc,
-                                   args.fps, (1280, 720))
-
+def read_images(paths):
     for path in tqdm(paths):
         img = cv2.imread(path)
         if img is not None:
-            img = img[:720, :, :]
-            video_writer.write(img)
+            yield img
         else:
-            LOGGER.info('Cannot read image file: %s', path)
+            break
 
-    video_writer.release()
+
+def main():
+    args = parse_args()
+    paths = sorted(glob(os.path.join(args.root, '*.jpg')))
+    cv2ools.write(read_images(paths), args.output)
 
 
 if __name__ == "__main__":
