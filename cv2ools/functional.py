@@ -28,4 +28,8 @@ def write_video(images, filename, **kwargs):
 
 def read_images(paths):
     for path in paths:
-        yield cv2.imread(path)
+        img = cv2.imread(path)
+        if img is not None:
+            yield img
+        else:
+            continue
