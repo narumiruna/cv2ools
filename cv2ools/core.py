@@ -19,7 +19,7 @@ class VideoWriter(cv2.VideoWriter):
     def __enter__(self):
         return self
 
-    def __exit__(self, *args, **kwargs):
+    def __exit__(self, exc_type, exc_value, traceback):
         self.release()
 
     def __repr__(self):
