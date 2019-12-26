@@ -1,4 +1,3 @@
-from .core import VideoCapture
 from .core import VideoWriter
 from .functional import read_images
 from .functional import read_video
