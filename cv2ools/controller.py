@@ -8,6 +8,7 @@ class Controller(object):
 
 
 class Compose(object):
+
     def __init__(self, controllers):
         self.controllers = controllers
 

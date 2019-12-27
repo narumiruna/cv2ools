@@ -1,5 +1,7 @@
 import cv2
 
+from .core import Displayer
+from .core import VideoStream
 from .core import VideoWriter
 from .logging import get_logger
 
@@ -18,6 +20,12 @@ def read_video(filename):
 
     cap.release()
     logger.info('video capture: %s released', filename)
+
+
+def display_video(filename):
+    stream = VideoStream(filename)
+    displayer = Displayer(stream)
+    displayer.display()
 
 
 def write_video(images, filename, **kwargs):

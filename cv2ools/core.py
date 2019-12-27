@@ -3,7 +3,44 @@ from queue import Queue
 
 import cv2
 
-from .controller import Compose, PauseController
+from .controller import Compose
+from .controller import PauseController
+
+
+class Displayer(object):
+    pause_key = ord('p')
+    quit_key = ord('q')
+
+    def __init__(self, stream, winname=None):
+        self.stream = stream
+        self.winname = winname or str()
+
+        self._delay = None
+
+    def display(self):
+        for image in self.stream:
+            cv2.imshow(self.winname, image)
+
+            key = cv2.waitKey(self.delay)
+
+            if key == self.pause_key:
+                self.wait()
+            elif key == self.quit_key:
+                break
+
+    def wait(self):
+        while True:
+            key = cv2.waitKey(1)
+            if key == self.pause_key:
+                break
+            elif key == self.quit_key:
+                break
+
+    @property
+    def delay(self):
+        if self._delay is None:
+            self._delay = int(1000 / self.stream.fps)
+        return self._delay
 
 
 class VideoStream(object):
@@ -13,6 +50,8 @@ class VideoStream(object):
         self.queue = Queue()
         self.thread = threading.Thread(target=self._read)
         self.thread.start()
+
+        self._fps = None
 
     def _read(self):
         while self.cap.isOpened():
@@ -34,12 +73,11 @@ class VideoStream(object):
             raise StopIteration
         return item
 
-    def show(self, winname='cv2ools', pause_key='p', break_key='q'):
-        controller = Compose([PauseController(pause_key)])
-        for image in self:
-            cv2.imshow(winname, image)
-            controller.control()
-
+    @property
+    def fps(self):
+        if self._fps is None:
+            self._fps = self.cap.get(cv2.CAP_PROP_FPS)
+        return self._fps
 
 
 class VideoWriter(cv2.VideoWriter):
