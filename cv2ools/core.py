@@ -3,6 +3,8 @@ from queue import Queue
 
 import cv2
 
+from .controller import Compose, PauseController
+
 
 class VideoStream(object):
 
@@ -31,6 +33,13 @@ class VideoStream(object):
         if item is None:
             raise StopIteration
         return item
+
+    def show(self, winname='cv2ools', pause_key='p', break_key='q'):
+        controller = Compose([PauseController(pause_key)])
+        for image in self:
+            cv2.imshow(winname, image)
+            controller.control()
+
 
 
 class VideoWriter(cv2.VideoWriter):
