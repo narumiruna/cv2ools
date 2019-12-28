@@ -9,17 +9,9 @@ logger = get_logger(__name__)
 
 
 def read_video(filename):
-    cap = cv2.VideoCapture(filename)
-
-    while cap.isOpened():
-        retval, image = cap.read()
-        if retval:
-            yield image
-        else:
-            break
-
-    cap.release()
-    logger.info('video capture: %s released', filename)
+    stream = VideoStream(filename)
+    for img in stream:
+        yield img
 
 
 def display_video(filename):
