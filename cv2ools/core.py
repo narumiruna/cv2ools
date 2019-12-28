@@ -43,14 +43,12 @@ class Displayer(object):
         self.controller = Controller()
 
     def display(self):
-        controller = Controller()
-
         for image in self.stream:
             cv2.imshow(self.winname, image)
 
-            controller.control(self.delay)
+            self.controller.control(self.delay)
 
-            if not controller.quit:
+            if not self.controller.quit:
                 self.stream.stop = True
                 break
 
