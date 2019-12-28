@@ -3,30 +3,25 @@ from queue import Queue
 
 import cv2
 
-from .controller import Compose
-from .controller import PauseController
+from .logging import get_logger
+
+logger = get_logger(__name__)
 
 
-class Displayer(object):
+class Controller(object):
     pause_key = ord('p')
     quit_key = ord('q')
 
-    def __init__(self, stream, winname=None):
-        self.stream = stream
-        self.winname = winname or str()
+    def __init__(self):
+        self.quit = True
 
-        self._delay = None
+    def control(self, delay):
+        key = cv2.waitKey(delay)
 
-    def display(self):
-        for image in self.stream:
-            cv2.imshow(self.winname, image)
-
-            key = cv2.waitKey(self.delay)
-
-            if key == self.pause_key:
-                self.wait()
-            elif key == self.quit_key:
-                break
+        if key == self.pause_key:
+            self.wait()
+        elif key == self.quit_key:
+            self.quit = False
 
     def wait(self):
         while True:
@@ -34,6 +29,29 @@ class Displayer(object):
             if key == self.pause_key:
                 break
             elif key == self.quit_key:
+                self.quit = False
+                break
+
+
+class Displayer(object):
+
+    def __init__(self, stream, winname=None):
+        self.stream = stream
+        self.winname = winname or str()
+
+        self._delay = None
+        self.controller = Controller()
+
+    def display(self):
+        controller = Controller()
+
+        for image in self.stream:
+            cv2.imshow(self.winname, image)
+
+            controller.control(self.delay)
+
+            if not controller.quit:
+                self.stream.stop = True
                 break
 
     @property
@@ -52,11 +70,15 @@ class VideoStream(object):
         self.thread.start()
 
         self._fps = None
+        self.stop = False
 
     def _read(self):
         while self.cap.isOpened():
             retval, image = self.cap.read()
-            if retval:
+            if self.stop:
+                logger.info('Stop reading stream')
+                break
+            elif retval:
                 self.queue.put(image)
             else:
                 break
