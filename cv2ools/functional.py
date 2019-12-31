@@ -1,6 +1,7 @@
 import cv2
 
 from .core import Displayer
+from .core import VideoFileStream
 from .core import VideoStream
 from .core import VideoWriter
 from .logging import get_logger
@@ -12,6 +13,12 @@ def read_video(filename):
     stream = VideoStream(filename)
     for img in stream:
         yield img
+
+
+def display_file_video(filename):
+    stream = VideoFileStream(filename)
+    displayer = Displayer(stream)
+    displayer.display()
 
 
 def display_video(filename):

@@ -54,12 +54,32 @@ class Displayer(object):
 
     @property
     def delay(self):
-        if self._delay is None:
-            self._delay = int(1000 / self.stream.fps)
-        return self._delay
-
+        try:
+            if self._delay is None:
+                self._delay = int(1000 / self.stream.fps)
+            return self._delay
+        except AttributeError:
+            return 1
 
 class VideoStream(object):
+
+    def __init__(self, filename):
+        self.cap = cv2.VideoCapture(filename)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.cap.isOpened():
+            retval, image = self.cap.read()
+            if retval:
+                return image
+
+        self.cap.release()
+        raise StopIteration
+
+
+class VideoFileStream(object):
 
     def __init__(self, filename):
         self.cap = cv2.VideoCapture(filename)

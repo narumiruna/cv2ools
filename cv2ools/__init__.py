@@ -1,3 +1,4 @@
+from .core import VideoFileStream
 from .core import VideoStream
 from .core import VideoWriter
 from .functional import display_video
