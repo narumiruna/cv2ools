@@ -12,7 +12,7 @@ from .utils import get_logger
 logger = get_logger(__name__)
 
 
-def is_url(s: str) -> bool:
+def _is_url(s: str) -> bool:
     try:
         result = urllib.parse.urlparse(s)
         return all([result.scheme, result.netloc, result.path])
@@ -21,7 +21,7 @@ def is_url(s: str) -> bool:
         return False
 
 
-def is_file(s):
+def _is_file(s):
     return os.path.exists(s)
 
 
