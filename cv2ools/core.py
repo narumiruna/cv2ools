@@ -3,7 +3,7 @@ from queue import Queue
 
 import cv2
 
-from .logging import get_logger
+from .utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -60,6 +60,7 @@ class Displayer(object):
             return self._delay
         except AttributeError:
             return 1
+
 
 class VideoStream(object):
 

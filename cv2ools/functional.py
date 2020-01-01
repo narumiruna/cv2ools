@@ -1,12 +1,28 @@
+import os
+import urllib
+
 import cv2
 
 from .core import Displayer
 from .core import VideoFileStream
 from .core import VideoStream
 from .core import VideoWriter
-from .logging import get_logger
+from .utils import get_logger
 
 logger = get_logger(__name__)
+
+
+def is_url(s: str) -> bool:
+    try:
+        result = urllib.parse.urlparse(s)
+        return all([result.scheme, result.netloc, result.path])
+    except Exception as e:
+        logger.debug(e)
+        return False
+
+
+def is_file(s):
+    return os.path.exists(s)
 
 
 def read_video(filename):
@@ -15,14 +31,14 @@ def read_video(filename):
         yield img
 
 
-def display_file_video(filename):
-    stream = VideoFileStream(filename)
-    displayer = Displayer(stream)
-    displayer.display()
-
-
 def display_video(filename):
-    stream = VideoStream(filename)
+    if _is_file(filename):
+        stream = VideoFileStream(filename)
+    elif _is_url(filename):
+        stream = VideoStream(filename)
+    else:
+        raise ValueError('filename is invalid')
+
     displayer = Displayer(stream)
     displayer.display()
 
