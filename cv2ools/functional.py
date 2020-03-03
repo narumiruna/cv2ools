@@ -2,14 +2,12 @@ import os
 import urllib
 
 import cv2
+from loguru import logger
 
 from .core import Displayer
 from .core import VideoFileStream
 from .core import VideoStream
 from .core import VideoWriter
-from .utils import get_logger
-
-logger = get_logger(__name__)
 
 
 def _is_url(s: str) -> bool:

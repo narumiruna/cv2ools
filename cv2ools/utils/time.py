@@ -1,10 +1,7 @@
 import time
 
 import torch
-
-from .logging import get_logger
-
-LOGGER = get_logger(__name__)
+from loguru import logger
 
 
 class Average(object):
@@ -42,7 +39,7 @@ def timeit(func):
 
         average.update(t)
 
-        LOGGER.debug('%s took %.6f seconds, average: %.6f seconds, fps: %.2f', func.__qualname__, t, average.value,
+        logger.debug('%s took %.6f seconds, average: %.6f seconds, fps: %.2f', func.__qualname__, t, average.value,
                      1 / average.value)
         return output
 

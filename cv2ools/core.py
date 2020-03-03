@@ -2,10 +2,7 @@ import threading
 from queue import Queue
 
 import cv2
-
-from .utils import get_logger
-
-logger = get_logger(__name__)
+from loguru import logger
 
 
 class Controller(object):
