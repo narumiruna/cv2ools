@@ -29,7 +29,7 @@ def read_video(filename):
         yield img
 
 
-def display_video(src):
+def display_video(src, fps=None):
     logger.debug('the type of {} is {}', src, type(src))
     if isinstance(src, int):
         stream = VideoStream(src)
@@ -39,6 +39,9 @@ def display_video(src):
         stream = VideoStream(src)
     else:
         raise ValueError('filename is invalid')
+
+    if fps is not None:
+        stream.fps = fps
 
     displayer = Displayer(stream)
     displayer.display()
