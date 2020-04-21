@@ -29,11 +29,14 @@ def read_video(filename):
         yield img
 
 
-def display_video(filename):
-    if _is_file(filename):
-        stream = VideoFileStream(filename)
-    elif _is_url(filename):
-        stream = VideoStream(filename)
+def display_video(src):
+    logger.debug('the type of {} is {}', src, type(src))
+    if isinstance(src, int):
+        stream = VideoStream(src)
+    elif _is_file(src):
+        stream = VideoFileStream(src)
+    elif _is_url(src):
+        stream = VideoStream(src)
     else:
         raise ValueError('filename is invalid')
 
