@@ -1,13 +1,12 @@
 import os
 import urllib
+from typing import Iterable
 
 import cv2
+import numpy as np
 from loguru import logger
 
-from .core import Displayer
-from .core import VideoFileStream
-from .core import VideoStream
-from .core import VideoWriter
+from .core import Displayer, VideoFileStream, VideoStream, VideoWriter
 
 
 def _is_url(s: str) -> bool:
@@ -47,8 +46,9 @@ def display_video(src, fps=None):
     displayer.display()
 
 
-def write_video(images, filename, **kwargs):
-    with VideoWriter(filename, **kwargs) as writer:
+def write_video(images: Iterable[np.ndarray], filename: str, fps: float, **kwargs):
+    r"""Convert images to a video"""
+    with VideoWriter(filename, fps, **kwargs) as writer:
         for image in images:
             writer.write(image)
 

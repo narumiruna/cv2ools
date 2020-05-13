@@ -2,6 +2,7 @@ import threading
 from queue import Queue
 
 import cv2
+import numpy as np
 from loguru import logger
 
 
@@ -120,20 +121,37 @@ class VideoFileStream(object):
 
 class VideoWriter(object):
 
-    def __init__(self, filename, api_preference=cv2.CAP_FFMPEG, fourcc='mp4v', fps=60, frame_size=(1024, 768)):
-        if isinstance(fourcc, str):
-            fourcc = cv2.VideoWriter_fourcc(*fourcc)
-        self.writer = cv2.VideoWriter(filename=filename,
-                                      apiPreference=api_preference,
-                                      fourcc=fourcc,
-                                      fps=fps,
-                                      frameSize=frame_size)
+    def __init__(self, filename: str, fps: float, fourcc: str = 'mp4v'):
+        self.filename = filename
+        self.fps = fps
+        self.fourcc = fourcc
+
+        self.size = None
+        self.writer = None
+        self._init_done = False
+
+    def write(self, image: np.ndarray):
+        if not self._init_done:
+            self._init_once(image)
+            logger.debug('initialize video writer')
+
+        self.writer.write(image)
+
+    def _init_once(self, image: np.ndarray):
+        h, w, _ = image.shape
+        self.size = (w, h)
+        logger.debug('size of first image: ({}, {})', w, h)
+        self.writer = cv2.VideoWriter(filename=self.filename,
+                                      apiPreference=cv2.CAP_FFMPEG,
+                                      fourcc=cv2.VideoWriter_fourcc(*self.fourcc),
+                                      fps=self.fps,
+                                      frameSize=self.size)
+        self._init_done = True
 
     def release(self):
-        self.writer.release()
-
-    def write(self, image):
-        self.writer.write(image)
+        if self.writer is not None:
+            self.writer.release()
+            logger.debug('release video writer')
 
     def __enter__(self):
         return self
@@ -142,4 +160,9 @@ class VideoWriter(object):
         self.release()
 
     def __repr__(self):
-        return self.__class__.__name__ + '()'
+        format_string = self.__class__.__name__ + '('
+        format_string += 'filename={}'.format(self.filename)
+        format_string += ', fps={}'.format(self.fps)
+        format_string += ', fourcc={}'.format(self.fourcc)
+        format_string += ')'
+        return format_string
