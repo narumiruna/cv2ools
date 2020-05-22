@@ -17,6 +17,7 @@ def main():
         author_email='weaper@gamil.com',
         packages=find_packages(),
         install_requires=list(parse_requirements('requirements.txt')),
+        entry_points={'console_scripts': ['cv2ools=cv2ools.cli:cli']},
     )
 
 
